@@ -5,14 +5,12 @@ interface ButtonProps {
     wallet: BeaconWallet | null;
     setUserAddress: Dispatch<SetStateAction<string>>;
     setWallet: Dispatch<SetStateAction<any>>;
-    setBeaconConnected: Dispatch<SetStateAction<boolean>>;
 }
 
 const DisconnectButton = ({
     wallet,
     setUserAddress,
     setWallet,
-    setBeaconConnected,
 }: ButtonProps): JSX.Element => {
     const disconnectWallet = async (): Promise<void> => {
         if (wallet) {
@@ -20,13 +18,12 @@ const DisconnectButton = ({
         }
         setUserAddress("");
         setWallet(null);
-        setBeaconConnected(false);
     };
 
     return (
         <div className="buttons">
             <button className="button" onClick={disconnectWallet}>
-                <i className="fas fa-times"></i>&nbsp; Disconnect wallet
+                Disconnect wallet
             </button>
         </div>
     );

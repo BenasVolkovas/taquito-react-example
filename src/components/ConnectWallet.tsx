@@ -1,11 +1,7 @@
-import React, { Dispatch, SetStateAction, useState, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { TezosToolkit } from "@taquito/taquito";
 import { BeaconWallet } from "@taquito/beacon-wallet";
-import {
-    NetworkType,
-    BeaconEvent,
-    defaultEventCallbacks,
-} from "@airgap/beacon-dapp";
+import { NetworkType } from "@airgap/beacon-dapp";
 
 type ButtonProps = {
     rpcUrl: string;
@@ -14,7 +10,6 @@ type ButtonProps = {
     setWallet: Dispatch<SetStateAction<any>>;
     setUserAddress: Dispatch<SetStateAction<string>>;
     contractAddress: string;
-    setBeaconConnected: Dispatch<SetStateAction<boolean>>;
     wallet: BeaconWallet;
 };
 
@@ -25,7 +20,6 @@ const ConnectButton = ({
     setWallet,
     setUserAddress,
     contractAddress,
-    setBeaconConnected,
     wallet,
 }: ButtonProps): JSX.Element => {
     const setup = async (userAddress: string): Promise<void> => {
@@ -48,7 +42,6 @@ const ConnectButton = ({
             // Get user's address
             const userAddress = await wallet.getPKH();
             await setup(userAddress);
-            setBeaconConnected(true);
         } catch (error) {
             console.log(error);
         }
@@ -69,7 +62,6 @@ const ConnectButton = ({
         if (activeAccount) {
             const userAddress = await beaconWallet.getPKH();
             await setup(userAddress);
-            setBeaconConnected(true);
         }
     };
 

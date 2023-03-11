@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { TezosToolkit } from "@taquito/taquito";
 import "./App.css";
+import { useState } from "react";
+import { TezosToolkit } from "@taquito/taquito";
 import ConnectButton from "./components/ConnectWallet";
 import DisconnectButton from "./components/DisconnectWallet";
 
@@ -12,31 +12,22 @@ const App = () => {
 
     // State variables
     // const [storage, setStorage] = useState<number>(0);
-    const [contract, setContract] = useState<any>(undefined);
+    const [contract, setContract] = useState<any>(null);
     const [wallet, setWallet] = useState<any>(null);
     const [userAddress, setUserAddress] = useState<string>("");
-    const [beaconConnected, setBeaconConnected] = useState<boolean>(false);
 
-    console.log("userAddress", userAddress);
-
-    if (userAddress) {
-        return (
-            <div className="main-box">
-                <div id="content">
-                    <p>{contractAddress}</p>
-                    <p>{userAddress}</p>
+    return (
+        <div className="main-box">
+            {userAddress ? (
+                <div>
+                    <p>UserAddress: {userAddress}</p>
+                    <DisconnectButton
+                        wallet={wallet}
+                        setUserAddress={setUserAddress}
+                        setWallet={setWallet}
+                    />
                 </div>
-                <DisconnectButton
-                    wallet={wallet}
-                    setUserAddress={setUserAddress}
-                    setWallet={setWallet}
-                    setBeaconConnected={setBeaconConnected}
-                />
-            </div>
-        );
-    } else if (!userAddress) {
-        return (
-            <div className="main-box">
+            ) : (
                 <ConnectButton
                     rpcUrl={rpcUrl}
                     Tezos={Tezos}
@@ -44,14 +35,11 @@ const App = () => {
                     setWallet={setWallet}
                     setUserAddress={setUserAddress}
                     contractAddress={contractAddress}
-                    setBeaconConnected={setBeaconConnected}
                     wallet={wallet}
                 />
-            </div>
-        );
-    } else {
-        return <div>An error has occurred</div>;
-    }
+            )}
+        </div>
+    );
 };
 
 export default App;
