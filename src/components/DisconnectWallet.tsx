@@ -1,23 +1,18 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { BeaconWallet } from "@taquito/beacon-wallet";
-import { TezosToolkit } from "@taquito/taquito";
 
 interface ButtonProps {
     wallet: BeaconWallet | null;
-    setPublicToken: Dispatch<SetStateAction<string | null>>;
     setUserAddress: Dispatch<SetStateAction<string>>;
     setWallet: Dispatch<SetStateAction<any>>;
-    setTezos: Dispatch<SetStateAction<TezosToolkit>>;
-    setbeaconConnectionActiveActive: Dispatch<SetStateAction<boolean>>;
+    setBeaconConnected: Dispatch<SetStateAction<boolean>>;
 }
 
 const DisconnectButton = ({
     wallet,
-    setPublicToken,
     setUserAddress,
     setWallet,
-    setTezos,
-    setbeaconConnectionActiveActive,
+    setBeaconConnected,
 }: ButtonProps): JSX.Element => {
     const disconnectWallet = async (): Promise<void> => {
         if (wallet) {
@@ -25,10 +20,7 @@ const DisconnectButton = ({
         }
         setUserAddress("");
         setWallet(null);
-        const tezosTK = new TezosToolkit("https://ghostnet.ecadinfra.com");
-        setTezos(tezosTK);
-        setbeaconConnectionActiveActive(false);
-        setPublicToken(null);
+        setBeaconConnected(false);
     };
 
     return (

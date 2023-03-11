@@ -8,36 +8,32 @@ import {
 } from "@airgap/beacon-dapp";
 
 type ButtonProps = {
+    rpcUrl: string;
     Tezos: TezosToolkit;
     setContract: Dispatch<SetStateAction<any>>;
     setWallet: Dispatch<SetStateAction<any>>;
     setUserAddress: Dispatch<SetStateAction<string>>;
-    setStorage: Dispatch<SetStateAction<number>>;
     contractAddress: string;
-    setbeaconConnectionActiveActive: Dispatch<SetStateAction<boolean>>;
-    setPublicToken: Dispatch<SetStateAction<string | null>>;
+    setBeaconConnected: Dispatch<SetStateAction<boolean>>;
     wallet: BeaconWallet;
 };
 
 const ConnectButton = ({
+    rpcUrl,
     Tezos,
     setContract,
     setWallet,
     setUserAddress,
-    setStorage,
     contractAddress,
-    setbeaconConnectionActiveActive,
-    setPublicToken,
+    setBeaconConnected,
     wallet,
 }: ButtonProps): JSX.Element => {
     const setup = async (userAddress: string): Promise<void> => {
-        setUserAddress(userAddress);
-
-        // creates contract instance
+        // Creates contract instance
         const contract = await Tezos.wallet.at(contractAddress);
-        const storage: any = await contract.storage();
         setContract(contract);
-        setStorage(storage.toNumber());
+
+        setUserAddress(userAddress);
     };
 
     const connectWallet = async (): Promise<void> => {
@@ -45,53 +41,50 @@ const ConnectButton = ({
             await wallet.requestPermissions({
                 network: {
                     type: NetworkType.GHOSTNET,
-                    rpcUrl: "https://ghostnet.ecadinfra.com",
+                    rpcUrl: rpcUrl,
                 },
             });
-            // gets user's address
+
+            // Get user's address
             const userAddress = await wallet.getPKH();
             await setup(userAddress);
-            setbeaconConnectionActiveActive(true);
+            setBeaconConnected(true);
         } catch (error) {
             console.log(error);
         }
     };
 
-    useEffect(() => {
-        (async () => {
-            // creates a wallet instance
-            const wallet = new BeaconWallet({
-                name: "Taquito React template",
-                preferredNetwork: NetworkType.GHOSTNET,
-                disableDefaultEvents: true, // Disable all events / UI. This also disables the pairing alert.
-                eventHandlers: {
-                    // To keep the pairing alert, we have to add the following default event handlers back
-                    [BeaconEvent.PAIR_INIT]: {
-                        handler: defaultEventCallbacks.PAIR_INIT,
-                    },
-                    [BeaconEvent.PAIR_SUCCESS]: {
-                        handler: (data) => setPublicToken(data.publicKey),
-                    },
-                },
-            });
-            Tezos.setWalletProvider(wallet);
-            setWallet(wallet);
-            // checks if wallet was connected before
-            const activeAccount = await wallet.client.getActiveAccount();
-            if (activeAccount) {
-                const userAddress = await wallet.getPKH();
-                await setup(userAddress);
-                setbeaconConnectionActiveActive(true);
-            }
-        })();
-    }, []);
+    const initialSetup = async () => {
+        // Creates a wallet instance
+        const beaconWallet = new BeaconWallet({
+            name: "Dapp",
+            preferredNetwork: NetworkType.GHOSTNET,
+            disableDefaultEvents: false,
+        });
+        Tezos.setWalletProvider(beaconWallet);
+        setWallet(beaconWallet);
+
+        // Checks if wallet was connected before
+        const activeAccount = await beaconWallet.client.getActiveAccount();
+        if (activeAccount) {
+            const userAddress = await beaconWallet.getPKH();
+            await setup(userAddress);
+            setBeaconConnected(true);
+        }
+    };
+
+    useEffect(
+        () => {
+            initialSetup();
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        []
+    );
 
     return (
         <div className="buttons">
             <button className="button" onClick={connectWallet}>
-                <span>
-                    <i className="fas fa-wallet"></i>&nbsp; Connect wallet
-                </span>
+                Connect wallet
             </button>
         </div>
     );

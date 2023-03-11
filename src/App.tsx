@@ -5,23 +5,21 @@ import ConnectButton from "./components/ConnectWallet";
 import DisconnectButton from "./components/DisconnectWallet";
 
 const App = () => {
-    const [Tezos, setTezos] = useState<TezosToolkit>(
-        new TezosToolkit("https://ghostnet.ecadinfra.com")
-    );
+    // Constants
+    const contractAddress: string = "KT1QMGSLynvwwSfGbaiJ8gzWHibTCweCGcu8";
+    const rpcUrl: string = "https://ghostnet.ecadinfra.com";
+    const Tezos: TezosToolkit = new TezosToolkit(rpcUrl);
+
+    // State variables
+    // const [storage, setStorage] = useState<number>(0);
     const [contract, setContract] = useState<any>(undefined);
-    const [publicToken, setPublicToken] = useState<string | null>(null);
     const [wallet, setWallet] = useState<any>(null);
     const [userAddress, setUserAddress] = useState<string>("");
-    const [storage, setStorage] = useState<number>(0);
-    const [beaconConnectionActive, setbeaconConnectionActiveActive] =
-        useState<boolean>(false);
+    const [beaconConnected, setBeaconConnected] = useState<boolean>(false);
 
-    // Ghostnet Increment/Decrement contract
-    const contractAddress: string = "KT1QMGSLynvwwSfGbaiJ8gzWHibTCweCGcu8";
+    console.log("userAddress", userAddress);
 
-    if (publicToken && !userAddress) {
-        return <div className="main-box">Connecting to your wallet</div>;
-    } else if (userAddress) {
+    if (userAddress) {
         return (
             <div className="main-box">
                 <div id="content">
@@ -30,30 +28,23 @@ const App = () => {
                 </div>
                 <DisconnectButton
                     wallet={wallet}
-                    setPublicToken={setPublicToken}
                     setUserAddress={setUserAddress}
                     setWallet={setWallet}
-                    setTezos={setTezos}
-                    setbeaconConnectionActiveActive={
-                        setbeaconConnectionActiveActive
-                    }
+                    setBeaconConnected={setBeaconConnected}
                 />
             </div>
         );
-    } else if (!publicToken && !userAddress) {
+    } else if (!userAddress) {
         return (
             <div className="main-box">
                 <ConnectButton
+                    rpcUrl={rpcUrl}
                     Tezos={Tezos}
                     setContract={setContract}
-                    setPublicToken={setPublicToken}
                     setWallet={setWallet}
                     setUserAddress={setUserAddress}
-                    setStorage={setStorage}
                     contractAddress={contractAddress}
-                    setbeaconConnectionActiveActive={
-                        setbeaconConnectionActiveActive
-                    }
+                    setBeaconConnected={setBeaconConnected}
                     wallet={wallet}
                 />
             </div>
